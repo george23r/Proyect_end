@@ -498,7 +498,57 @@ const driftProducts = [
     status: "Nuevo",
     nationality: "Importado",
     carBrand: "Hyundai"
-  }
+    
+  }  
 ];
+function generateProductCard(product) {
+  return `
+  <div class="col-lg-4 col-md-6 mb-4">
+      <div class="card h-100">
+          <a href=><img class="card-img-top" src="${product.image}" alt="..."></a>
+          <div class="card-body">
+              <h4 class="card-title">
+                  <a href="shop-single.html">${product.name}</a>
+              </h4>
+              <h5>${product.price}</h5>
+              <p class="card-text">${product.category}</p>
+          </div>
+          <div class="card-footer">
+              <small class="text-muted">${product.status}</small>
+          </div>
+      </div>
+  </div>`;
+}
+
+// Función para dividir los productos en secciones de 15 productos cada una
+function generateProductSections(products, pageNumber, pageSize) {
+  const startIndex = (pageNumber - 1) * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, products.length);
+  const sectionProducts = products.slice(startIndex, endIndex);
+  const sectionCards = sectionProducts.map(product => generateProductCard(product)).join('');
+  return `<div class="row">${sectionCards}</div>`;
+}
+
+// Obtener el contenedor de las tarjetas de producto y las páginas
+const productCardsContainer = document.getElementById('productCards');
+const paginationContainer = document.querySelector('.pagination');
+const pageSize = 15; // Número de productos por página
+
+// Función para manejar el cambio de página
+function changePage(pageNumber) {
+  const productSections = generateProductSections(driftProducts, pageNumber, pageSize);
+  productCardsContainer.innerHTML = productSections;
+}
+
+// Generar las tarjetas de producto y la paginación para la primera página
+changePage(1);
+
+// Generar los enlaces de paginación
+let paginationHTML = '';
+const pageCount = Math.ceil(driftProducts.length / pageSize);
+for (let i = 1; i <= pageCount; i++) {
+  paginationHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
+}
+paginationContainer.innerHTML = paginationHTML;
 
 console.log(driftProducts);
